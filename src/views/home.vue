@@ -6,16 +6,21 @@
     <div class="center-wrapper">
       <Search />
     </div>
+    <div class="center-wrapper keyboard-wrapper">
+      <Keyboard />
+    </div>
   </div>
 </template>
 
 <script>
 import Clock from '@/components/Clock'
 import Search from '@/components/Search'
+import Keyboard from '@/components/Keyboard'
 export default {
   components: {
     Clock,
-    Search
+    Search,
+    Keyboard
   },
   data () {
     return {
@@ -39,5 +44,10 @@ export default {
 <style lang='scss'>
 body {
   --textColor: #262626;
+}
+@media screen and (max-width: 820px) {
+  .keyboard-wrapper {
+    display: none;
+  }
 }
 </style>
