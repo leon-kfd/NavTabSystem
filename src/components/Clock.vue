@@ -32,4 +32,8 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
+.time {
+  font-family: -apple-system, BlinkMacSystemFont, 'Neue Haas Grotesk Text Pro',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
 </style>

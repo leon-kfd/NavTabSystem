@@ -6,9 +6,19 @@
          :class="{hidden: item.span}"
          :style="{width: `${item.span ? item.span * 4.5 : 9}%`}">
       <div class="keys-box"
-           @click="handleKeyClick(key)">
+           @click="handleKeyClick($event, key)">
         <div class="keys">
           <div class="keys-name">{{key}}</div>
+          <div class="edit-icon-box"
+               v-if="userSettingKeyMap[key]"
+               @click.stop="showDialog($event,key)">
+            <svg class="icon"
+                 viewBox="0 0 1024 1024"
+                 width="14"
+                 height="14">
+              <path d="M896 469.333333H554.666667V128a42.666667 42.666667 0 0 0-85.333334 0v341.333333H128a42.666667 42.666667 0 0 0 0 85.333334h341.333333v341.333333a42.666667 42.666667 0 0 0 85.333334 0V554.666667h341.333333a42.666667 42.666667 0 0 0 0-85.333334z"></path>
+            </svg>
+          </div>
           <div class="plus-box"
                v-if="!userSettingKeyMap[key]">
             <svg class="icon"
@@ -35,12 +45,50 @@
         <div class="keys"></div>
       </div>
     </div>
+    <animation-dialog ref="dialog"
+                      class="an-dialog"
+                      customClass="key-edit-dialog"
+                      width="300px"
+                      height="300px"
+                      @beforeClose="handleDialogClose">
+      <div class="edit-content"
+           v-show="editingActive">
+        <div class="editing-key">{{editingInfo.key}}</div>
+        <div class="row-input"
+             :class="{active: editingInfo.url.length>0}">
+          <input type="text"
+                 v-model="editingInfo.url">
+          <div class="label">URL</div>
+          <div class="line"></div>
+        </div>
+        <div class="row-input"
+             :class="{active: editingInfo.remark.length>0}">
+          <input type="text"
+                 v-model="editingInfo.remark">
+          <div class="label">Remark</div>
+          <div class="line"></div>
+        </div>
+        <div class="footer clear">
+          <button tyle="button"
+                  class="btn btn-danger fl"
+                  :disabled="!editingInfo.url && !editingInfo.remark"
+                  @click="clearEidtInfo">Clear</button>
+          <button tyle="button"
+                  class="btn btn-primary fr"
+                  @click="handleUserKeySave">Save</button>
+        </div>
+      </div>
+    </animation-dialog>
   </div>
 </template>
 
 <script>
+import AnimationDialog from '@/components/animation-dialog'
 export default {
   name: 'Keyboard',
+  components: {
+    AnimationDialog
+  },
   data () {
     return {
       keyboardMap: {
@@ -138,24 +186,20 @@ export default {
           keyCode: 77
         }
       },
-      userSettingKeyMap: {
-        B: {
-          url: 'http://www.baidu.com',
-          remark: '百度'
-        },
-        J: {
-          url: 'https://juejin.im/timeline',
-          remark: '掘金'
-        },
-        K: {
-          url: 'http://kongfandong.cn',
-          remark: '个人博客'
-        }
+      userSettingKeyMap: {},
+      editingActive: false,
+      editingInfo: {
+        key: '',
+        url: '',
+        remark: ''
       }
     }
   },
   mounted () {
     document.addEventListener('keydown', this.handleKeyboardKeydown)
+    if (localStorage.getItem('userSettingKeyMap')) {
+      this.userSettingKeyMap = JSON.parse(localStorage.getItem('userSettingKeyMap'))
+    }
   },
   methods: {
     handleKeyboardKeydown (e) {
@@ -165,10 +209,57 @@ export default {
         window.open(this.userSettingKeyMap[key].url)
       }
     },
-    handleKeyClick (key) {
+    handleKeyClick ($event, key) {
       if (key && this.userSettingKeyMap[key]) {
         window.open(this.userSettingKeyMap[key].url)
+      } else {
+        this.$refs.dialog.open($event.currentTarget)
+        this.editingInfo.key = key
+        setTimeout(() => {
+          this.editingActive = true
+        }, 200)
       }
+    },
+    handleDialogClose () {
+      setTimeout(() => {
+        this.editingInfo.key = ''
+        this.editingInfo.url = ''
+        this.editingInfo.remark = ''
+        this.editingActive = false
+      }, 200)
+    },
+    showDialog ($event, key) {
+      const el = $event.currentTarget.parentNode.parentNode
+      this.$refs.dialog.open(el)
+      this.editingInfo.key = key
+      const { url, remark } = this.userSettingKeyMap[key]
+      this.editingInfo.url = url
+      this.editingInfo.remark = remark
+      setTimeout(() => {
+        this.editingActive = true
+      }, 200)
+    },
+    clearEidtInfo () {
+      if (this.editingInfo.url && this.editingInfo.remark) {
+        if (confirm('确定清除该按键绑定的网页吗?')) {
+          this.editingInfo.url = ''
+          this.editingInfo.remark = ''
+          delete this.userSettingKeyMap[this.editingInfo.key]
+          localStorage.setItem('userSettingKeyMap', JSON.stringify(this.userSettingKeyMap))
+          this.handleDialogClose()
+          this.$refs.dialog.close()
+        }
+      }
+    },
+    handleUserKeySave () {
+      if (!this.editingInfo.url || !this.editingInfo.remark) return
+      this.userSettingKeyMap[this.editingInfo.key] = {
+        url: this.editingInfo.url,
+        remark: this.editingInfo.remark
+      }
+      localStorage.setItem('userSettingKeyMap', JSON.stringify(this.userSettingKeyMap))
+      this.handleDialogClose()
+      this.$refs.dialog.close()
     }
   }
 }
@@ -178,7 +269,7 @@ export default {
 #Keyboard {
   display: flex;
   flex-wrap: wrap;
-  max-width: 900px;
+  max-width: 980px;
   margin: 1.5rem auto;
   overflow: hidden;
   .keys-wrapper {
@@ -192,10 +283,13 @@ export default {
       border-radius: 4px;
       cursor: pointer;
       box-shadow: 0 0.3px 1px #aab, 0 0.5px 2px #ccd;
-      transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+      transition: box-shadow 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+      &.is-open {
+        visibility: hidden;
+      }
       &:hover {
         box-shadow: 0 0.3px 4px #aab, 0 0.5px 6px #ccd;
-        transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+        transition: box-shadow 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
       }
       .keys {
         position: absolute;
@@ -208,7 +302,7 @@ export default {
           top: 4px;
           left: 4px;
           font-weight: bold;
-          font-size: 14px;
+          font-size: 15px;
           color: #262626;
         }
         .icon-box,
@@ -225,6 +319,7 @@ export default {
         }
         .icon-box {
           top: calc(50% - 5px);
+          border-radius: 50%;
           .icon {
             width: 28px;
             height: 28px;
@@ -251,6 +346,23 @@ export default {
           overflow: hidden;
           white-space: nowrap;
         }
+        .edit-icon-box {
+          position: absolute;
+          right: 2px;
+          top: 2px;
+          border-radius: 50%;
+          width: 22px;
+          height: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          svg path {
+            fill: #262626;
+          }
+          &:hover {
+            background: #e2e2e5;
+          }
+        }
       }
     }
     &.hidden {
@@ -261,5 +373,95 @@ export default {
       }
     }
   }
+  .edit-content {
+    overflow: hidden;
+    .editing-key {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+    .row-input {
+      margin: 35px 0;
+      position: relative;
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        outline: none;
+        border: none;
+        height: 32px;
+        line-height: 32px;
+        box-shadow: 0 2px 0 #ccc;
+        padding: 0 4px;
+        font-size: 18px;
+        color: #363640;
+      }
+      .label {
+        position: absolute;
+        top: 7px;
+        left: 5px;
+        font-size: 18px;
+        color: #767682;
+        font-weight: bold;
+        pointer-events: none;
+        transition: all 0.4s;
+      }
+      input:focus + .label {
+        transform: translate(-8px, -22px) scale(0.8);
+        font-weight: bold;
+        color: #606bff;
+        transition: all 0.4s;
+      }
+      &.active .label {
+        transform: translate(-8px, -22px) scale(0.8);
+        font-weight: bold;
+        color: #262626;
+        transition: all 0.4s;
+      }
+      .line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        border-bottom: 2px solid #606bff;
+        transform: scale(0);
+        transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+      input:focus ~ .line {
+        transform: scale(1);
+        transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+    }
+    .footer {
+      text-align: right;
+      margin: 40px 0 0;
+      .btn {
+        background: none;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 18px;
+        transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+      .btn-primary {
+        background: #606bff;
+        color: #fff;
+        &:hover {
+          background: #454ecf;
+          transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+      }
+      .btn-danger {
+        color: #ce3c3c;
+        &:hover {
+          background: rgb(255, 234, 234);
+          transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+      }
+    }
+  }
+}
+.key-edit-dialog {
+  border-radius: 4px;
 }
 </style>
