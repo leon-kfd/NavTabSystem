@@ -2,7 +2,7 @@
   <div id="Setting">
     <div class="setting-icon"
          @click="settingDialog = !settingDialog">
-      <svg class="icon"
+      <svg class="icon svg-text-color"
            v-if="!settingDialog"
            viewBox="0 0 1024 1024"
            width="30"
@@ -23,15 +23,17 @@
         <div class="title">搜索设置</div>
         <div class="content">
           <div class="text">当前引擎组</div>
-          <draggable :list="nowEngineList"
-                     group="engine"
-                     @start="handleDragStart"
+          <draggable :list="engineList"
+                     :group="{
+                       name: 'engine',
+                       pull: engineList.length >1
+                      }"
                      @end="handleDragEnd">
             <transition-group type="transition"
                               name="flip-list"
                               class="now-engine-list engine-list">
               <div class="engine-list-item"
-                   v-for="item in nowEngineList"
+                   v-for="item in engineList"
                    :key="item.name">
                 <img :src="item.iconPath"
                      alt="icon"
@@ -70,7 +72,8 @@ import draggable from 'vuedraggable'
 export default {
   name: 'Setting',
   props: {
-    engineList: Array
+    engineList: Array,
+    backupEngineList: Array
   },
   components: {
     draggable
@@ -78,36 +81,12 @@ export default {
   data () {
     return {
       settingDialog: false,
-      nowEngineList: [],
-      dragDisabled: false,
-      backupEngineList: [
-        {
-          name: 'Bilibili',
-          iconPath: require('@/assets/img/icon/bilibili.svg'),
-          link: 'https://search.bilibili.com/all?keyword='
-        },
-        {
-          name: '搜狗',
-          iconPath: require('@/assets/img/icon/sougou.svg'),
-          link: 'https://www.sogou.com/tx?query='
-        },
-        {
-          name: '淘宝',
-          iconPath: require('@/assets/img/icon/taobao.svg'),
-          link: 'https://s.taobao.com/search?q='
-        }
-      ]
+      dragDisabled: false
     }
   },
-  mounted () {
-    this.nowEngineList = JSON.parse(JSON.stringify(this.engineList))
-  },
   methods: {
-    handleDragStart () {
-
-    },
     handleDragEnd () {
-      this.$emit('update:engineList', this.nowEngineList)
+      localStorage.setItem('engineList', JSON.stringify(this.engineList))
     }
   }
 }
@@ -123,14 +102,7 @@ export default {
     width: 30px;
     height: 30px;
     z-index: 999;
-    background: #fff;
-    svg path {
-      fill: #363636;
-    }
     &:hover {
-      svg path {
-        fill: #667;
-      }
       transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
     }
   }

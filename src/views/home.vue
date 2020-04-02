@@ -1,16 +1,20 @@
 <template>
   <div id="home">
-    <div class="center-wrapper clock-wrapper">
+    <div class="clock-wrapper center">
       <Clock />
     </div>
-    <div class="center-wrapper search-wrapper">
+    <div class="search-wrapper center">
       <Search :engineList="engineList" />
     </div>
-    <div class="center-wrapper keyboard-wrapper">
+    <div class="keyboard-wrapper center">
       <Keyboard />
     </div>
     <div class="setting-wrapper">
-      <Setting :engineList.sync="engineList" />
+      <Setting :engineList="engineList"
+               :backupEngineList="backupEngineList" />
+    </div>
+    <div class="background-wrapper">
+      <Background />
     </div>
   </div>
 </template>
@@ -20,12 +24,14 @@ import Clock from '@/components/Clock'
 import Search from '@/components/Search'
 import Keyboard from '@/components/Keyboard'
 import Setting from '@/components/Setting'
+import Background from '@/components/Background'
 export default {
   components: {
     Clock,
     Search,
     Keyboard,
-    Setting
+    Setting,
+    Background
   },
   data () {
     return {
@@ -46,24 +52,52 @@ export default {
           link: 'https://www.baidu.com/s?wd='
         },
         {
+          name: '有道词典',
+          iconPath: require('@/assets/img/icon/youdao.svg'),
+          link: 'http://dict.youdao.com/w/'
+        }
+      ],
+      backupEngineList: [
+        {
           name: 'Google',
           iconPath: require('@/assets/img/icon/google.svg'),
           link: 'https://www.google.com/search?q='
         },
         {
-          name: '有道词典',
-          iconPath: require('@/assets/img/icon/youdao.svg'),
-          link: 'http://dict.youdao.com/w/'
+          name: '搜狗',
+          iconPath: require('@/assets/img/icon/sougou.svg'),
+          link: 'https://www.sogou.com/tx?query='
+        },
+        {
+          name: 'Bilibili',
+          iconPath: require('@/assets/img/icon/bilibili.svg'),
+          link: 'https://search.bilibili.com/all?keyword='
+        },
+        {
+          name: '淘宝',
+          iconPath: require('@/assets/img/icon/taobao.svg'),
+          link: 'https://s.taobao.com/search?q='
         }
-      ]
+      ],
+      allEngineList: []
+    }
+  },
+  mounted () {
+    this.allEngineList = [
+      ...JSON.parse(JSON.stringify(this.engineList)),
+      ...JSON.parse(JSON.stringify(this.backupEngineList))
+    ]
+    if (localStorage.getItem('engineList')) {
+      this.engineList = JSON.parse(localStorage.getItem('engineList'))
+      this.engineNameList = this.engineList.map(item => item.name)
+      this.backupEngineList = this.allEngineList.filter(item => !this.engineNameList.includes(item.name))
     }
   }
 }
 </script>
 <style lang='scss' scoped>
-.center-wrapper {
+.center {
   text-align: center;
-  margin: 1rem;
 }
 .clock-wrapper {
   cursor: default;
@@ -72,14 +106,21 @@ export default {
   color: var(--textColor);
   user-select: none;
   margin-top: 10vh;
+  padding: 0 1rem;
 }
 .search-wrapper {
   margin-bottom: 100px;
+  padding: 0 1rem;
 }
 </style>
 <style lang='scss'>
 body {
-  --textColor: #262626;
+  --textColor: #f8f8f9;
+}
+.svg-text-color {
+  path {
+    fill: var(--textColor);
+  }
 }
 @media screen and (max-width: 820px) {
   .keyboard-wrapper {

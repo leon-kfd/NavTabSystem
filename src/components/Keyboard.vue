@@ -328,7 +328,7 @@ export default {
         .plus-box {
           top: 50%;
           svg path {
-            fill: #d2d4d6;
+            fill: #9898a2;
           }
         }
         .mark-text {
