@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import { getToday } from '@/utils/helper'
 export default {
   name: 'Background',
@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     getPhotoList () {
-      axios.get('http://localhost:5001/photos').then(data => {
+      axios.get('http://kongfandong.cn/photos').then(data => {
         const imgList = data.data.data.list
         this.$store.commit('setUnsplashImgList', imgList)
         const today = getToday()

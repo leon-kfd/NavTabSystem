@@ -38,6 +38,12 @@
     "env": {
       "node": true
     },
+    "globals": {
+      "Vue": true,
+      "VueRouter": true,
+      "Vuex": true,
+      "axios": true
+    },
     "extends": [
       "plugin:vue/essential",
       "@vue/standard"

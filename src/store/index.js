@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+// import Vue from 'vue'
+// import Vuex from 'vuex'
 import { getBase64Image, getToday } from '@/utils/helper'
 
 Vue.use(Vuex)
@@ -90,7 +90,8 @@ export default new Vuex.Store({
       if (state.cacheImg[imgId]) {
         commit('setDownloadingImgBase64', state.cacheImg[imgId])
       } else {
-        const imgURL = downloadingImg.urls.regular
+        const imgURL = downloadingImg.urls.regular.replace('w=1080', 'w=1440').replace('q=80', 'q=75')
+        // const imgURL = downloadingImg.urls.regular
         const img = new Image()
         img.src = imgURL
         img.crossOrigin = 'anonymous'
