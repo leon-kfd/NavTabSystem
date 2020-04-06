@@ -1,7 +1,7 @@
 <template>
   <div id="Setting">
     <div class="setting-icon"
-         @click="settingDialog = !settingDialog">
+         @click="handleSettingIconClick">
       <svg class="icon svg-text-color"
            v-if="!settingDialog"
            viewBox="0 0 1024 1024"
@@ -19,74 +19,31 @@
     </div>
     <div class="setting-content"
          :class="{active: settingDialog}">
-      <div class="engine-setting">
-        <div class="title">搜索设置</div>
-        <div class="content">
-          <div class="text">当前引擎组</div>
-          <draggable :list="engineList"
-                     :group="{
-                       name: 'engine',
-                       pull: engineList.length >1
-                      }"
-                     @end="handleDragEnd">
-            <transition-group type="transition"
-                              name="flip-list"
-                              class="now-engine-list engine-list">
-              <div class="engine-list-item"
-                   v-for="item in engineList"
-                   :key="item.name">
-                <img :src="item.iconPath"
-                     alt="icon"
-                     width="24"
-                     height="24">
-                <div class="text">{{item.name}}</div>
-              </div>
-            </transition-group>
-          </draggable>
-          <div class="text">备用引擎组</div>
-          <draggable :list="backupEngineList"
-                     group="engine"
-                     @end="handleDragEnd">
-            <transition-group type="transition"
-                              name="flip-list"
-                              class="backupEngineList engine-list">
-              <div class="engine-list-item"
-                   v-for="item in  backupEngineList"
-                   :key="item.name">
-                <img :src="item.iconPath"
-                     alt="icon"
-                     width="24"
-                     height="24">
-                <div class="text">{{item.name}}</div>
-              </div>
-            </transition-group>
-          </draggable>
-        </div>
-      </div>
+      <engine-setting v-if="loadFlag" />
+      <background-setting v-if="loadFlag" />
     </div>
   </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable'
+// import EngineSetting from './setting/EngineSetting'
+// import BackgroundSetting from './setting/BackgroundSetting'
 export default {
   name: 'Setting',
-  props: {
-    engineList: Array,
-    backupEngineList: Array
-  },
   components: {
-    draggable
+    EngineSetting: () => import('./setting/EngineSetting'),
+    BackgroundSetting: () => import('./setting/BackgroundSetting')
   },
   data () {
     return {
       settingDialog: false,
-      dragDisabled: false
+      loadFlag: false
     }
   },
   methods: {
-    handleDragEnd () {
-      localStorage.setItem('engineList', JSON.stringify(this.engineList))
+    handleSettingIconClick () {
+      this.settingDialog = !this.settingDialog
+      this.loadFlag = true
     }
   }
 }
@@ -114,52 +71,16 @@ export default {
     top: 0;
     width: 100vw;
     height: 100vh;
-    max-width: 450px;
+    max-width: 540px;
     z-index: 998;
     transform: translateX(100%);
     transition: all 0.4s ease-in-out;
-    padding: 30px 5px;
+    padding: 10px;
+    overflow-y: auto;
     &.active {
       transform: translateX(0);
       transition: all 0.4s ease-in-out;
     }
-    .title {
-      padding: 15px 10px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .engine-setting {
-      .content {
-        .text {
-          font-size: 14px;
-          color: #778;
-          margin: 0 10px;
-        }
-      }
-      .engine-list {
-        display: flex;
-        padding: 8px;
-        flex-wrap: wrap;
-        .engine-list-item {
-          padding: 5px 0;
-          cursor: pointer;
-          border-radius: 3px;
-          text-align: center;
-          width: 70px;
-          .text {
-            line-height: 18px;
-            font-size: 12px;
-            color: #889;
-          }
-          &:hover {
-            background: #d9d9e4;
-          }
-        }
-      }
-    }
   }
-}
-.flip-list-move {
-  transition: transform 0.5s;
 }
 </style>

@@ -269,12 +269,12 @@ export default {
 #Keyboard {
   display: flex;
   flex-wrap: wrap;
-  max-width: 980px;
+  max-width: 1020px;
   margin: 1.5rem auto;
   overflow: hidden;
   .keys-wrapper {
     box-sizing: border-box;
-    padding: 5px;
+    padding: 8px;
     .keys-box {
       width: 100%;
       padding-bottom: 100%;
@@ -282,14 +282,14 @@ export default {
       position: relative;
       border-radius: 4px;
       cursor: pointer;
-      box-shadow: 0 0.3px 1px #aab, 0 0.5px 2px #ccd;
+      box-shadow: 0 0 5px #262626;
       transition: box-shadow 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
       &.is-open {
         visibility: hidden;
       }
       &:hover {
-        box-shadow: 0 0.3px 4px #aab, 0 0.5px 6px #ccd;
-        transition: box-shadow 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+        box-shadow: 0 0 10px #262626;
+        transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
       }
       .keys {
         position: absolute;
@@ -408,7 +408,7 @@ export default {
       input:focus + .label {
         transform: translate(-8px, -22px) scale(0.8);
         font-weight: bold;
-        color: #606bff;
+        color: var(--primaryColor);
         transition: all 0.4s;
       }
       &.active .label {
@@ -421,7 +421,7 @@ export default {
         position: absolute;
         left: 0;
         width: 100%;
-        border-bottom: 2px solid #606bff;
+        border-bottom: 2px solid var(--primaryColor);
         transform: scale(0);
         transition: transform 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
       }
@@ -444,7 +444,7 @@ export default {
         transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
       }
       .btn-primary {
-        background: #606bff;
+        background: var(--primaryColor);
         color: #fff;
         &:hover {
           background: #454ecf;

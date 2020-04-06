@@ -2,7 +2,7 @@
   <div id="Search">
     <div class="search-engine-box"
          @click.stop="showEngine = !showEngine">
-      <img :src="engineList[activeEngine].iconPath"
+      <img :src="$store.state.engineList[activeEngine].iconPath"
            width="24"
            height="24"
            alt="Icon">
@@ -12,7 +12,7 @@
            ref="engineSelecotr"
            v-show="showEngine">
         <div class="engine-list-item"
-             v-for="(item,index) in engineList"
+             v-for="(item,index) in $store.state.engineList"
              :key="index"
              @click="handleChangeEngine(index)">
           <img :src="item.iconPath"
@@ -40,9 +40,6 @@
 <script>
 export default {
   name: 'Search',
-  props: {
-    engineList: Array
-  },
   data () {
     return {
       activeEngine: 0,
@@ -65,19 +62,19 @@ export default {
     handleInputKeyDown (e) {
       if (e.keyCode === 9) {
         if (e.shiftKey) {
-          this.activeEngine = this.activeEngine <= 0 ? this.engineList.length - 1 : --this.activeEngine
+          this.activeEngine = this.activeEngine <= 0 ? this.$store.state.engineList.length - 1 : --this.activeEngine
           e.preventDefault()
         } else {
-          this.activeEngine = this.activeEngine >= this.engineList.length - 1 ? 0 : ++this.activeEngine
+          this.activeEngine = this.activeEngine >= this.$store.state.engineList.length - 1 ? 0 : ++this.activeEngine
           e.preventDefault()
         }
       }
       if (e.keyCode === 13) {
-        window.open(this.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
+        window.open(this.$store.state.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
       }
     },
     handleSearchBtnClick () {
-      window.open(this.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
+      window.open(this.$store.state.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
     }
   }
 }
@@ -90,13 +87,13 @@ export default {
   margin: 1.5rem auto;
   height: 2.4rem;
   border-radius: 4px;
-  box-shadow: 0 0.3px 1px #aab, 0 0.5px 2px #ccd;
+  box-shadow: 0 0 5px #262626;
   align-items: center;
   transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
   position: relative;
   background: #fff;
   &:hover {
-    box-shadow: 0 0.3px 4px #aab, 0 0.5px 6px #ccd;
+    box-shadow: 0 0 10px #262626;
     transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
   }
   .search-engine-box {

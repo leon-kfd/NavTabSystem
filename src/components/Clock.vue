@@ -35,5 +35,7 @@ export default {
 .time {
   font-family: -apple-system, BlinkMacSystemFont, 'Neue Haas Grotesk Text Pro',
     'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: var(--textColor);
+  text-shadow: 0 0 10px var(--textShadowColor);
 }
 </style>
