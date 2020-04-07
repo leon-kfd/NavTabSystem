@@ -1,6 +1,9 @@
 <template>
   <div id="BackgroundSetting">
-    <div class="title">背景图设置</div>
+    <div class="clear">
+      <div class="title fl">背景图设置</div>
+      <div class="tips fr">{{date}}, UNSPLASH</div>
+    </div>
     <div class="content">
       <div class="img-list">
         <div class="img-list-item"
@@ -15,10 +18,16 @@
 
 <script>
 import BackgroundImage from './BackgroundImage'
+import { getToday } from '@/utils/helper'
 export default {
   name: 'BackgroundSetting',
   components: {
     BackgroundImage
+  },
+  data () {
+    return {
+      date: getToday()
+    }
   },
   computed: {
     imgList () {
@@ -35,6 +44,14 @@ export default {
   font-size: 20px;
   font-weight: bold;
   border-left: 5px solid var(--primaryColor);
+}
+.tips {
+  padding: 0 12px;
+  margin: 13px 0 10px;
+  font-size: 14px;
+  color: #889;
+  line-height: 26px;
+  font-weight: bold;
 }
 .img-list {
   display: flex;

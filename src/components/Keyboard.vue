@@ -446,6 +446,7 @@ export default {
         padding: 0 4px;
         font-size: 18px;
         color: #363640;
+        appearance: none;
       }
       .label {
         position: absolute;

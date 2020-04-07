@@ -44,6 +44,11 @@ export default {
     handleSettingIconClick () {
       this.settingDialog = !this.settingDialog
       this.loadFlag = true
+      if (this.settingDialog) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
     }
   }
 }

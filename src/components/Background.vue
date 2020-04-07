@@ -11,15 +11,9 @@
 </template>
 
 <script>
-// import axios from 'axios'
-import { getToday } from '@/utils/helper'
+import { getToday, ajaxGet } from '@/utils/helper'
 export default {
   name: 'Background',
-  data () {
-    return {
-      // bgImg: require('@/assets/img/bg.jpg')
-    }
-  },
   computed: {
     bgImg () {
       return this.$store.state.downloadingImgBase64
@@ -30,8 +24,9 @@ export default {
   },
   methods: {
     getPhotoList () {
-      axios.get('http://kongfandong.cn/photos').then(data => {
-        const imgList = data.data.data.list
+      ajaxGet('http://kongfandong.cn/photos').then(data => {
+        const res = JSON.parse(data)
+        const imgList = res.data.list
         this.$store.commit('setUnsplashImgList', imgList)
         const today = getToday()
         if (localStorage.getItem('userTodayImgInfo')) {
