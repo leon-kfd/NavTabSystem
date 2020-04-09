@@ -26,7 +26,8 @@
     <input class="search-input-box"
            v-model="searchKey"
            @keydown.stop="handleInputKeyDown"
-           tabindex="-1" />
+           tabindex="-1"
+           :placeholder="placeholder" />
     <div class="search-btn"
          @click="handleSearchBtnClick">
       <svg viewBox="0 0 1024 1024"
@@ -44,7 +45,8 @@ export default {
     return {
       activeEngine: 0,
       showEngine: false,
-      searchKey: ''
+      searchKey: '',
+      placeholder: ''
     }
   },
   mounted () {
@@ -53,6 +55,10 @@ export default {
         this.showEngine = false
       }
     })
+    if (!localStorage.getItem('ignoreTips')) {
+      this.placeholder = '按Tab键快速切换搜索引擎'
+      localStorage.setItem('ignoreTips', 1)
+    }
   },
   methods: {
     handleChangeEngine (index) {
@@ -165,5 +171,21 @@ export default {
       fill: #262626;
     }
   }
+}
+input::-webkit-input-placeholder {
+  color: #99a;
+  font-size: 12px;
+}
+input::-moz-placeholder {
+  color: #99a;
+  font-size: 12px;
+}
+input:-moz-placeholder {
+  color: #99a;
+  font-size: 12px;
+}
+input:-ms-input-placeholder {
+  color: #99a;
+  font-size: 12px;
 }
 </style>

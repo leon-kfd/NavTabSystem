@@ -53,7 +53,6 @@ export default new Vuex.Store({
     ],
     unsplashImgList: [],
     downloadingImgInfo: null,
-    // downloadingImgEl: null,
     downloadingImgBase64: '',
     downloadingProcess: 0,
     cacheImg: {}
@@ -71,9 +70,6 @@ export default new Vuex.Store({
     setDownloadingImgInfo (state, downloadingImgInfo) {
       state.downloadingImgInfo = downloadingImgInfo
     },
-    // setDownloadingImgEl (state, downloadingImgEl) {
-    //   state.downloadingImgEl = downloadingImgEl
-    // },
     setDownloadingProcess (state, downloadingProcess) {
       state.downloadingProcess = downloadingProcess
     },
@@ -118,24 +114,6 @@ export default new Vuex.Store({
           }
           localStorage.setItem('userTodayImgInfo', JSON.stringify(userTodayImgInfo))
         })
-        // const img = new Image()
-        // img.crossOrigin = 'anonymous'
-        // img.src = imgURL
-        // commit('setDownloadingImgInfo', downloadingImg)
-        // commit('setDownloadingImgEl', img)
-        // img.onload = function (e) {
-        //   console.log({ img }, e)
-        //   const dataURL = getBase64Image(img)
-        //   commit('setDownloadingImgBase64', dataURL)
-        //   commit('setCacheImg', { imgId, base64: dataURL })
-        //   commit('setDownloadingImgInfo', null)
-        //   commit('setDownloadingImgEl', null)
-        //   const userTodayImgInfo = {
-        //     ...downloadingImg,
-        //     date: getToday()
-        //   }
-        //   localStorage.setItem('userTodayImgInfo', JSON.stringify(userTodayImgInfo))
-        // }
       }
     }
   },
