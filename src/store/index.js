@@ -77,6 +77,14 @@ export default new Vuex.Store({
       document.body.style.setProperty('--textColor', base64 ? '#f8f8f9' : '#262626')
       document.body.style.setProperty('--textShadowColor', base64 ? '#262626' : 'transparent')
       state.downloadingImgBase64 = base64
+      const userTodayImgCache = {
+        date: getToday(),
+        base64
+      }
+      const toJson = JSON.stringify(userTodayImgCache)
+      if (toJson.length < 3.5 * 1024 * 1024) {
+        localStorage.setItem('userTodayImgCache', JSON.stringify(userTodayImgCache))
+      }
     },
     setCacheImg (state, { imgId, base64 }) {
       state.cacheImg = {
@@ -108,11 +116,6 @@ export default new Vuex.Store({
           commit('setDownloadingImgBase64', dataURL)
           commit('setCacheImg', { imgId, base64: dataURL })
           commit('setDownloadingImgInfo', null)
-          const userTodayImgInfo = {
-            ...downloadingImg,
-            date: getToday()
-          }
-          localStorage.setItem('userTodayImgInfo', JSON.stringify(userTodayImgInfo))
         })
       }
     }

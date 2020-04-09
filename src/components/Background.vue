@@ -29,10 +29,10 @@ export default {
         const imgList = res.data.list
         this.$store.commit('setUnsplashImgList', imgList)
         const today = getToday()
-        if (localStorage.getItem('userTodayImgInfo')) {
-          const userTodayImgInfo = JSON.parse(localStorage.getItem('userTodayImgInfo'))
-          if (userTodayImgInfo.date === today) {
-            this.$store.dispatch('getDownloadingImg', userTodayImgInfo)
+        if (localStorage.getItem('userTodayImgCache')) {
+          const userTodayImgCache = JSON.parse(localStorage.getItem('userTodayImgCache'))
+          if (userTodayImgCache.date === today) {
+            this.$store.commit('setDownloadingImgBase64', userTodayImgCache.base64)
             return
           }
         }

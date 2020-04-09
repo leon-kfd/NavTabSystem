@@ -26,8 +26,9 @@
     <input class="search-input-box"
            v-model="searchKey"
            @keydown.stop="handleInputKeyDown"
-           tabindex="-1"
-           :placeholder="placeholder" />
+           @focus="handleInputFocus"
+           @blur="handleInputBlur"
+           tabindex="-1" />
     <div class="search-btn"
          @click="handleSearchBtnClick">
       <svg viewBox="0 0 1024 1024"
@@ -36,6 +37,14 @@
         <path d="M419.405333 0c231.683703 0 419.456512 185.265077 419.456512 413.724553a408.862625 408.862625 0 0 1-101.179298 269.55557l275.748132 280.098278a35.108244 35.108244 0 0 1-0.767673 50.154634 36.336521 36.336521 0 0 1-50.819951-0.716495l-275.49224-279.944743a421.19657 421.19657 0 0 1-266.945482 94.628488C187.823987 827.500285 0 642.235208 0 413.724553 0 185.265077 187.823987 0 419.405333 0z m0 70.932983c-191.918243 0-347.499965 153.483416-347.499965 342.79157 0 189.359333 155.581722 342.842749 347.499965 342.842749s347.551143-153.534594 347.551144-342.842749c0-189.359333-155.581722-342.791571-347.499965-342.79157z"></path>
       </svg>
     </div>
+    <transition name="fadeInUp">
+      <div class="tab-tooltips"
+           v-show="showTabTips">
+        <div class="main">按Tab键可快速切换搜索引擎</div>
+        <div class="no-more"
+             @click="hanldeNoShowMore">不再提示</div>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -46,7 +55,7 @@ export default {
       activeEngine: 0,
       showEngine: false,
       searchKey: '',
-      placeholder: '按Tab键快速切换搜索引擎'
+      showTabTips: false
     }
   },
   mounted () {
@@ -55,10 +64,6 @@ export default {
         this.showEngine = false
       }
     })
-    // if (!localStorage.getItem('ignoreTips')) {
-    //   this.placeholder = '按Tab键快速切换搜索引擎'
-    //   localStorage.setItem('ignoreTips', 1)
-    // }
   },
   methods: {
     handleChangeEngine (index) {
@@ -81,6 +86,18 @@ export default {
     },
     handleSearchBtnClick () {
       window.open(this.$store.state.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
+    },
+    handleInputFocus () {
+      if (!localStorage.getItem('tabTipsNoShow')) {
+        this.showTabTips = true
+      }
+    },
+    handleInputBlur () {
+      this.showTabTips = false
+    },
+    hanldeNoShowMore () {
+      this.showTabTips = false
+      localStorage.setItem('tabTipsNoShow', 1)
     }
   }
 }
@@ -171,20 +188,48 @@ export default {
       fill: #262626;
     }
   }
+  .tab-tooltips {
+    position: absolute;
+    padding: 6px 3px 6px 8px;
+    top: 3.4rem;
+    left: 50px;
+    width: auto;
+    border-radius: 4px;
+    background: #f5e2cd;
+    display: flex;
+    filter: drop-shadow(0 0 5px rgb(150, 92, 57));
+    align-items: center;
+    &::before {
+      position: absolute;
+      content: '';
+      width: 0;
+      height: 0;
+      top: -8px;
+      left: 14px;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid #f5e2cd;
+    }
+    .main {
+      font-size: 14px;
+      color: #ff933b;
+      margin-right: 10px;
+    }
+    .no-more {
+      font-size: 14px;
+      color: rgb(122, 122, 119);
+      padding: 3px 5px;
+      cursor: pointer;
+      border-radius: 3px;
+      &:hover {
+        background: #c2ccda;
+      }
+    }
+  }
 }
-input::-webkit-input-placeholder {
-  color: #aab;
-  font-size: 12px;
-}
-input::-moz-placeholder {
-  color: #aab;
-  font-size: 12px;
-}
-input:-moz-placeholder {
-  color: #aab;
-  font-size: 12px;
-}
-input:-ms-input-placeholder {
+</style>
+<style>
+input::placeholder {
   color: #aab;
   font-size: 12px;
 }
