@@ -46,7 +46,7 @@ export default {
       activeEngine: 0,
       showEngine: false,
       searchKey: '',
-      placeholder: ''
+      placeholder: '按Tab键快速切换搜索引擎'
     }
   },
   mounted () {
@@ -55,10 +55,10 @@ export default {
         this.showEngine = false
       }
     })
-    if (!localStorage.getItem('ignoreTips')) {
-      this.placeholder = '按Tab键快速切换搜索引擎'
-      localStorage.setItem('ignoreTips', 1)
-    }
+    // if (!localStorage.getItem('ignoreTips')) {
+    //   this.placeholder = '按Tab键快速切换搜索引擎'
+    //   localStorage.setItem('ignoreTips', 1)
+    // }
   },
   methods: {
     handleChangeEngine (index) {
@@ -173,19 +173,19 @@ export default {
   }
 }
 input::-webkit-input-placeholder {
-  color: #99a;
+  color: #aab;
   font-size: 12px;
 }
 input::-moz-placeholder {
-  color: #99a;
+  color: #aab;
   font-size: 12px;
 }
 input:-moz-placeholder {
-  color: #99a;
+  color: #aab;
   font-size: 12px;
 }
 input:-ms-input-placeholder {
-  color: #99a;
+  color: #aab;
   font-size: 12px;
 }
 </style>
