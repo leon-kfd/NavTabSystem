@@ -38,15 +38,17 @@
           </div>
           <div class="icon-box"
                v-if="userSettingKeyMap[key]">
-            <img class="icon"
+            <!-- <img class="icon"
                  :src="`${userSettingKeyMap[key].url.match(/^(\w+:\/\/)?([^\/]+)/i) ? userSettingKeyMap[key].url.match(/^(\w+:\/\/)?([^\/]+)/i)[0] : ''}/favicon.ico`"
+                 alt="link"
+                 @load="hanldeImgLoad"
+                 @error="handleImgError"> -->
+            <img class="icon"
+                 :src="userSettingKeyMap[key].url ? `http://favicon.cccyun.cc/${userSettingKeyMap[key].url}`: ''"
                  alt="link"
                  @load="hanldeImgLoad"
                  @error="handleImgError">
             <div class="no-icon">{{userSettingKeyMap[key].remark.slice(0,1)}}</div>
-            <!-- <img class="icon"
-                 :src="userSettingKeyMap[key].url.match(/^(\w+:\/\/)?([^\/]+)/i) ? `https://www.google.cn/s2/favicons?domain=${userSettingKeyMap[key].url.match(/^(\w+:\/\/)?([^\/]+)/i)[0]}`: ''"
-                 alt="link"> -->
           </div>
           <div class="mark-text"
                v-if="userSettingKeyMap[key] && userSettingKeyMap[key].remark">{{userSettingKeyMap[key].remark}}</div>
