@@ -1,3 +1,4 @@
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const isProduction = process.env.NODE_ENV === 'production'
 module.exports = {
   configureWebpack: config => {
@@ -7,6 +8,9 @@ module.exports = {
         vuex: 'Vuex'
       }
     }
+    config.plugins.push(
+      // new BundleAnalyzerPlugin()
+    )
   },
   productionSourceMap: false
 }

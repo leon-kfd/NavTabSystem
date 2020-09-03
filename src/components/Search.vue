@@ -172,7 +172,7 @@ export default {
     border: none;
     background: transparent;
     padding: 0 10px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 500;
     color: #363640;
   }

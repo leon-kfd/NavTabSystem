@@ -20,12 +20,6 @@
               <path d="M231.08266667 509.49688889c-0.11377778 51.76888889-41.87022222 93.52533333-93.75288889 93.41155556-51.65511111-0.11377778-93.63911111-42.09777778-93.52533333-93.86666667 0-51.54133333 42.21155555-93.52533333 93.98044444-93.41155556 51.65511111 0.11377778 93.29777778 41.984 93.29777778 93.86666667z m656.49777778-93.75288889c51.76888889 0 93.86666667 41.87022222 93.86666666 93.52533333 0.11377778 51.65511111-41.87022222 93.75288889-93.63911111 93.75288889-51.88266667 0-93.75288889-41.64266667-93.75288889-93.52533333s41.64266667-93.75288889 93.52533334-93.75288889zM512.45511111 603.02222222c-51.65511111 0-93.98044445-42.43911111-93.75288889-93.75288889 0.34133333-51.76888889 42.21155555-93.52533333 93.98044445-93.52533333 51.65511111 0 93.86666667 42.21155555 93.63911111 93.75288889-0.11377778 51.65511111-42.09777778 93.52533333-93.86666667 93.52533333z"
                     p-id="2155"></path>
             </svg>
-            <!-- <svg class="icon"
-                 viewBox="0 0 1024 1024"
-                 width="14"
-                 height="14">
-              <path d="M896 469.333333H554.666667V128a42.666667 42.666667 0 0 0-85.333334 0v341.333333H128a42.666667 42.666667 0 0 0 0 85.333334h341.333333v341.333333a42.666667 42.666667 0 0 0 85.333334 0V554.666667h341.333333a42.666667 42.666667 0 0 0 0-85.333334z"></path>
-            </svg> -->
           </div>
           <div class="plus-box"
                v-if="!userSettingKeyMap[key]">
@@ -38,17 +32,11 @@
           </div>
           <div class="icon-box"
                v-if="userSettingKeyMap[key]">
-            <!-- <img class="icon"
-                 :src="`${userSettingKeyMap[key].url.match(/^(\w+:\/\/)?([^\/]+)/i) ? userSettingKeyMap[key].url.match(/^(\w+:\/\/)?([^\/]+)/i)[0] : ''}/favicon.ico`"
-                 alt="link"
-                 @load="hanldeImgLoad"
-                 @error="handleImgError"> -->
             <img class="icon"
                  :src="userSettingKeyMap[key].url ? `http://favicon.cccyun.cc/${userSettingKeyMap[key].url}`: ''"
                  alt="link"
-                 @load="hanldeImgLoad"
                  @error="handleImgError">
-            <div class="no-icon">{{userSettingKeyMap[key].remark.slice(0,1)}}</div>
+            <div class="no-icon" style="visibility:hidden">{{userSettingKeyMap[key].remark.slice(0,1)}}</div>
           </div>
           <div class="mark-text"
                v-if="userSettingKeyMap[key] && userSettingKeyMap[key].remark">{{userSettingKeyMap[key].remark}}</div>
@@ -285,13 +273,10 @@ export default {
         alert('URL地址不正确')
       }
     },
-    hanldeImgLoad (e) {
-      const el = e.currentTarget
-      el.style.visibility = 'visbile'
-    },
     handleImgError (e) {
       const el = e.currentTarget
       el.style.visibility = 'hidden'
+      el.nextElementSibling.style.visibility = 'visible'
     }
   }
 }
