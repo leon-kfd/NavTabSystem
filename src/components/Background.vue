@@ -14,29 +14,38 @@
 import { getToday, ajaxGet } from '@/utils/helper'
 export default {
   name: 'Background',
+  data () {
+    return {
+      userTodayImgCache: ''
+    }
+  },
   computed: {
     bgImg () {
       return this.$store.state.downloadingImgBase64
     }
   },
   mounted () {
+    this.setDefaultPhoto()
     this.getPhotoList()
   },
   methods: {
+    setDefaultPhoto () {
+      try {
+        this.userTodayImgCache = JSON.parse(localStorage.getItem('userTodayImgCache'))
+      } catch (e) {
+        // do nothing
+      }
+      if (this.userTodayImgCache) {
+        this.$store.commit('setDownloadingImgBase64', this.userTodayImgCache.base64)
+      }
+    },
     getPhotoList () {
       ajaxGet('http://kongfandong.cn/photos').then(data => {
         const res = JSON.parse(data)
         const imgList = res.data.list
         this.$store.commit('setUnsplashImgList', imgList)
         const today = getToday()
-        if (localStorage.getItem('userTodayImgCache')) {
-          const userTodayImgCache = JSON.parse(localStorage.getItem('userTodayImgCache'))
-          if (userTodayImgCache.date === today) {
-            this.$store.commit('setDownloadingImgBase64', userTodayImgCache.base64)
-            return
-          }
-        }
-        if (imgList.length > 0) {
+        if ((!this.userTodayImgCache || this.userTodayImgCache.date !== today) && imgList.length > 0) {
           this.$store.dispatch('getDownloadingImg', imgList[0])
         }
       })

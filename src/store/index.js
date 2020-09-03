@@ -1,6 +1,5 @@
-// import Vue from 'vue'
-// import Vuex from 'vuex'
-// import { getBase64Image, getToday } from '@/utils/helper'
+import Vue from 'vue'
+import Vuex from 'vuex'
 import { getBase64ByAjax, getToday } from '@/utils/helper'
 
 Vue.use(Vuex)
