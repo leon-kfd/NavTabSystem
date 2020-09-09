@@ -88,7 +88,8 @@
 </template>
 
 <script>
-import AnimationDialog from '@/components/animation-dialog'
+// import AnimationDialog from '@/components/animation-dialog'
+import AnimationDialog from 'howdyjs/lib/animation-dialog'
 export default {
   name: 'Keyboard',
   components: {
@@ -395,6 +396,7 @@ export default {
           display: flex;
           align-items: center;
           justify-content: space-around;
+          z-index: 2;
           svg path {
             fill: #262626;
           }

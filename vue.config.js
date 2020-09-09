@@ -12,5 +12,15 @@ module.exports = {
       // new BundleAnalyzerPlugin()
     )
   },
-  productionSourceMap: false
+  productionSourceMap: false,
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://kongfandong.cn',
+        pathRewrite: {
+          '/api': ''
+        }
+      }
+    }
+  }
 }

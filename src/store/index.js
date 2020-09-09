@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { getBase64ByAjax, getToday } from '@/utils/helper'
+import { getBase64ByAjax, getToday, getLocalStorage } from '@/utils/helper'
 
 Vue.use(Vuex)
 
@@ -71,6 +71,14 @@ export default new Vuex.Store({
     },
     setDownloadingProcess (state, downloadingProcess) {
       state.downloadingProcess = downloadingProcess
+    },
+    setDefaultImgBase64 (state) {
+      const userTodayImgCache = getLocalStorage('userTodayImgCache')
+      if (userTodayImgCache && userTodayImgCache.base64) {
+        document.body.style.setProperty('--textColor', '#f8f8f9')
+        document.body.style.setProperty('--textShadowColor', '#262626')
+        state.downloadingImgBase64 = userTodayImgCache.base64
+      }
     },
     setDownloadingImgBase64 (state, base64) {
       document.body.style.setProperty('--textColor', base64 ? '#f8f8f9' : '#262626')

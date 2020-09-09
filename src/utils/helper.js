@@ -61,3 +61,13 @@ export const ajaxGet = (url) => {
     xhr.send()
   })
 }
+
+export const getLocalStorage = (key) => {
+  let result
+  try {
+    result = JSON.parse(localStorage.getItem(key))
+  } catch (e) {
+    result = localStorage.getItem(key)
+  }
+  return result
+}
