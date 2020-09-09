@@ -1,6 +1,6 @@
 # Nav Tab System - 浏览器导航首页
 
-*基于Vue*
+*个性化的浏览器导航首页网站，基于Vue2，后续会更新上vue3，背景图来源于Unsplah*
 
 ## 功能
 
@@ -11,8 +11,10 @@
 
 ## 启动
 
+```
 npm i  
 npm run serve
+```
 
 ## 其他说明
 
