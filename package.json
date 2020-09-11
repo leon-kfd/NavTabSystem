@@ -10,8 +10,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
-    "crypto-js": "^4.0.0",
     "howdyjs": "^0.4.6",
+    "js-md5": "^0.7.3",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
     "vuedraggable": "^2.23.2",

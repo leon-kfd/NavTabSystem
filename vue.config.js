@@ -1,4 +1,4 @@
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const isProduction = process.env.NODE_ENV === 'production'
 module.exports = {
   configureWebpack: config => {
@@ -9,7 +9,7 @@ module.exports = {
       }
     }
     config.plugins.push(
-      // new BundleAnalyzerPlugin()
+      new BundleAnalyzerPlugin()
     )
   },
   productionSourceMap: false,

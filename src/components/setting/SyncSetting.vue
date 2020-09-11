@@ -46,7 +46,8 @@
 
 <script>
 import AnimationDialog from 'howdyjs/lib/animation-dialog'
-import MD5 from 'crypto-js/md5'
+// import MD5 from 'crypto-js/md5'
+import md5 from 'js-md5'
 import { ajaxPost, getLocalStorage, execCopy } from '@/utils/helper'
 export default {
   name: 'SyncSetting',
@@ -70,7 +71,6 @@ export default {
       }
     },
     exportKey () {
-      console.log(2)
       this.handleSavaConfig()
     }
   },
@@ -123,7 +123,7 @@ export default {
       const engineList = getLocalStorage('engineList')
       if (userSettingKeyMap) result = { ...result, userSettingKeyMap }
       if (engineList) result = { ...result, engineList }
-      const toMd5 = MD5(JSON.stringify(result)).toString()
+      const toMd5 = md5(JSON.stringify(result))
       const format = parseInt(`0x${toMd5}`, 16).toString(36).toUpperCase().slice(0, 5)
       this.exportKey = format
       this.exportValue = JSON.stringify(result)
