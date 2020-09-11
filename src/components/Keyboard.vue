@@ -271,7 +271,7 @@ export default {
         this.handleDialogClose()
         this.$refs.dialog.close()
       } else {
-        alert('URL地址不正确')
+        this.$warning('URL地址不正确')
       }
     },
     handleImgError (e) {

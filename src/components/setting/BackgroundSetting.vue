@@ -38,16 +38,20 @@ export default {
 </script>
 
 <style scoped lang="scss">
+#BackgroundSetting {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
 .title {
   padding: 0 12px;
-  margin: 10px 0;
+  margin-bottom: 5px;
   font-size: 20px;
   font-weight: bold;
   border-left: 5px solid var(--primaryColor);
 }
 .tips {
   padding: 0 12px;
-  margin: 13px 0 10px;
   font-size: 14px;
   color: #889;
   line-height: 26px;

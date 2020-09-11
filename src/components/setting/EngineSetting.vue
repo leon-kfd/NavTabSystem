@@ -84,8 +84,8 @@ export default {
   margin-bottom: 8px;
 }
 #EngineSetting {
-  padding-bottom: 15px;
-  margin-bottom: 15px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
 .title {

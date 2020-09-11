@@ -17,6 +17,7 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'http://kongfandong.cn',
+        // target: 'http://localhost:5001',
         pathRewrite: {
           '/api': ''
         }

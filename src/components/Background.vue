@@ -27,12 +27,16 @@ export default {
     getPhotoList () {
       ajaxGet(`${this.$baseURL}/photos`).then(data => {
         const res = JSON.parse(data)
-        const imgList = res.data.list
-        this.$store.commit('setUnsplashImgList', imgList)
-        const today = getToday()
-        const userTodayImgCache = getLocalStorage('userTodayImgCache')
-        if ((!userTodayImgCache || userTodayImgCache.date !== today) && imgList.length > 0) {
-          this.$store.dispatch('getDownloadingImg', imgList[0])
+        if (res.errCode === 200) {
+          const imgList = res.data.list
+          this.$store.commit('setUnsplashImgList', imgList)
+          const today = getToday()
+          const userTodayImgCache = getLocalStorage('userTodayImgCache')
+          if ((!userTodayImgCache || userTodayImgCache.date !== today) && imgList.length > 0) {
+            this.$store.dispatch('getDownloadingImg', imgList[0])
+          }
+        } else {
+          this.$error('获取每日图片列表失败')
         }
       })
     }

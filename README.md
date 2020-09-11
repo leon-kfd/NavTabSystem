@@ -7,7 +7,7 @@
 1. ✅搜索引擎切换
 2. ✅键盘收藏夹
 3. ✅背景图切换
-4. ✏配置同步
+4. ✅配置同步
 
 ## 在线DEMO
 项目成品已部署线上，<a href="http://s.kongfandong.cn" target="_blank">点击访问</a>

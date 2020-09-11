@@ -23,19 +23,19 @@
          :class="{active: settingDialog}">
       <engine-setting v-if="loadFlag" />
       <background-setting v-if="loadFlag" />
+      <sync-setting v-if="loadFlag" />
     </div>
     <div v-if="animationFlag" class="setting-mask" :class="{active: settingDialog}" @click="close"></div>
   </div>
 </template>
 
 <script>
-// import EngineSetting from './setting/EngineSetting'
-// import BackgroundSetting from './setting/BackgroundSetting'
 export default {
   name: 'Setting',
   components: {
     EngineSetting: () => import('./setting/EngineSetting'),
-    BackgroundSetting: () => import('./setting/BackgroundSetting')
+    BackgroundSetting: () => import('./setting/BackgroundSetting'),
+    SyncSetting: () => import('./setting/SyncSetting')
   },
   data () {
     return {
