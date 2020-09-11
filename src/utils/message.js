@@ -34,7 +34,7 @@ function createMessage(color, text, duration) {
     setTimeout(() => {
       el.removeEventListener('mouseenter', enterEvent)
       el.removeEventListener('mouseleave', leaveEvent)
-      document.body.removeChild(el)
+      document.body.contains(el) && document.body.removeChild(el)
     }, 400)
   }
   el.addEventListener('mouseenter', enterEvent)

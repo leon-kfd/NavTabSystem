@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Home />
+    <Home v-if="!$store.state.reloadFlag" />
   </div>
 </template>
 

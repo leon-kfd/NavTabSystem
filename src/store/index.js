@@ -54,7 +54,8 @@ export default new Vuex.Store({
     downloadingImgInfo: null,
     downloadingImgBase64: '',
     downloadingProcess: 0,
-    cacheImg: {}
+    cacheImg: {},
+    reloadFlag: false
   },
   mutations: {
     setEngineList (state, engineList) {
@@ -98,6 +99,9 @@ export default new Vuex.Store({
         ...state.cacheImg,
         [imgId]: base64
       }
+    },
+    setReloadFlag (state, flag) {
+      state.reloadFlag = flag
     }
   },
   actions: {
@@ -125,6 +129,12 @@ export default new Vuex.Store({
           commit('setDownloadingImgInfo', null)
         })
       }
+    },
+    reload({ commit, state }) {
+      commit('setReloadFlag', true)
+      Vue.nextTick(() => {
+        commit('setReloadFlag', false)
+      })
     }
   },
   modules: {

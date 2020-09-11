@@ -144,16 +144,16 @@ export default {
         }).then(data => {
           const res = JSON.parse(data)
           if (res.errCode === 200) {
-            try {
-              const importValue = JSON.parse(res.data)
-              if (confirm('已找到相应同步配置，配置会覆盖本地浏览器历史数据，是否继续？')) {
-                localStorage.setItem('userSettingKeyMap', JSON.stringify(importValue.userSettingKeyMap))
-                localStorage.setItem('engineList', JSON.stringify(importValue.engineList))
-                this.$success('同步配置成功')
-                this.$refs.importDialog.close()
-              }
-            } catch (e) {
-              this.$error('没有找到对应的同步配置，请检查密钥')
+            const importValue = JSON.parse(res.data)
+            if (confirm('已找到相应同步配置，配置会覆盖本地浏览器历史数据，是否继续？')) {
+              importValue.userSettingKeyMap && localStorage.setItem('userSettingKeyMap', JSON.stringify(importValue.userSettingKeyMap))
+              importValue.engineList && localStorage.setItem('engineList', JSON.stringify(importValue.engineList))
+              this.$success('同步配置成功')
+              this.$refs.importDialog.close()
+              this.$parent.handleSettingIconClick()
+              setTimeout(() => {
+                this.$store.dispatch('reload')
+              }, 400)
             }
           } else {
             this.$error('没有找到对应的同步配置，请检查密钥')
