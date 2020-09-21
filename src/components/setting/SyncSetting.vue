@@ -15,11 +15,8 @@
       <div class="title">Import</div>
       <div class="import-key">
         <div class="import-input-wrapper">
-          <input v-for="(item,index) in importKeyArr" :key="index" type="text" class="import-input" maxlength="1"
-                @paste.prevent="handlePaste"
-                @click.prevent="handleImportInputClick"
-                @keydown.stop="handleImportInputKeyDown"
-                v-model="importKeyArr[index]">
+          <input type="text" ref="importInput" v-model="importKey" class="import-input" maxlength="5" @keydown.stop>
+          <div class="line"></div>
         </div>
       </div>
       <div class="footer">
@@ -46,7 +43,6 @@
 
 <script>
 import AnimationDialog from 'howdyjs/lib/animation-dialog'
-// import MD5 from 'crypto-js/md5'
 import md5 from 'js-md5'
 import { ajaxPost, getLocalStorage, execCopy } from '@/utils/helper'
 export default {
@@ -58,62 +54,22 @@ export default {
     return {
       exportKey: '',
       exportValue: '',
-      importKeyArr: ['', '', '', '', '']
+      importKey: ''
     }
   },
   watch: {
-    importKeyArr (val) {
-      const emptyIndex = val.findIndex(item => !item)
-      if (emptyIndex > 0) {
-        this.$nextTick(() => {
-          document.querySelectorAll('.import-input')[emptyIndex].focus()
-        })
-      }
-    },
     exportKey () {
       this.handleSavaConfig()
     }
   },
   methods: {
-    handleImportInputClick (e) {
-      const activeLength = this.importKeyArr.filter(item => item).length
-      const index = activeLength === this.importKeyArr.length ? activeLength - 1 : activeLength
-      document.querySelectorAll('.import-input')[index].focus()
-    },
-    handleImportInputKeyDown (e) {
-      const { keyCode } = e
-      if (keyCode === 8) {
-        e.preventDefault()
-        const els = document.querySelectorAll('.import-input')
-        const el = e.target
-        const index = [].indexOf.call(els, el)
-        this.$set(this.importKeyArr, index, '')
-        this.$nextTick(() => {
-          const activeLength = this.importKeyArr.filter(item => item).length
-          if (activeLength > 0) {
-            this.$nextTick(() => {
-              els[activeLength - 1].focus()
-            })
-          }
-        })
-      }
-    },
-    handlePaste (e) {
-      if (e.clipboardData.items[0].kind === 'string') {
-        e.clipboardData.items[0].getAsString((str) => {
-          if (/^[0-9A-Z]{5}$/.test(str)) {
-            this.importKeyArr = str.split('')
-            document.querySelectorAll('.import-input')[this.importKeyArr.length - 1].focus()
-          } else {
-            this.$warning('格式不符合,粘贴失败')
-          }
-        })
-      }
+    prevent () {
+      // do nothing
     },
     showImport () {
       this.$refs.importDialog.open()
       this.$nextTick(() => {
-        this.handleImportInputClick()
+        this.$refs.importInput.focus()
       })
     },
     showExport () {
@@ -137,7 +93,8 @@ export default {
       }
     },
     handleImport () {
-      const importKey = this.importKeyArr.join('')
+      const importKey = this.importKey
+      if (!importKey) return
       if (/^[0-9A-Z]{5}$/.test(importKey)) {
         ajaxPost(`${this.$baseURL}/getImport`, {
           importKey
@@ -159,6 +116,8 @@ export default {
             this.$error('没有找到对应的同步配置，请检查密钥')
           }
         })
+      } else {
+        this.$error('密钥格式不合法')
       }
     },
     handleSavaConfig () {
@@ -232,22 +191,39 @@ export default {
     text-align: center;
   }
   .import-input-wrapper {
-    display:inline-flex;
+    position: relative;
+    width: 240px;
+    margin: 0 auto;
+    height: 60px;
     .import-input {
-      flex: 1;
       width: 100%;
       font-size: 44px;
       font-weight: bold;
       color: #262626;
-      height: 50px;
-      line-height: 50px;
+      height: 58px;
+      line-height: 58px;
       font-family: MingLiU,DotumChe,Fixedsys,Terminal,MS Mincho;
       text-align: center;
-      margin: 0 4px;
       overflow: hidden;
       outline: none;
       border: none;
       border-bottom: 2px solid #ccc;
+      border-radius: 0;
+      letter-spacing: 5px;
+      padding: 0;
+    }
+    .line {
+      position: absolute;
+      bottom: 0;
+      width: 0;
+      left: 50%;
+      transform:translateX(-50%);
+      border-bottom: 2px solid  #2e5adb;
+      transition: all .4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    .import-input:focus + .line{
+      width: 100%;
+      transition: all .4s cubic-bezier(0.075, 0.82, 0.165, 1);
     }
   }
 }
