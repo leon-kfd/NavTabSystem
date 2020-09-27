@@ -55,12 +55,12 @@
     <animation-dialog ref="addDialog"
                       class="an-dialog"
                       customClass="add-dialog"
-                      width="500px"
-                      height="500px"
+                      :width="isMobile ? '100vw' : '500px'"
+                      :height="isMobile ? '100vh' : '500px'"
                       animationMode
                       appendToBody>
       <div class="title">添加自定义引擎</div>
-      <div class="form">
+      <div class="form" :style="isMobile ? 'padding: 10px 0' : ''">
         <div class="form-item">
           <div class="label">引擎名称</div>
           <div class="content">
@@ -145,6 +145,7 @@ export default {
   },
   data () {
     return {
+      isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent),
       iconTypeList,
       dragDisabled: false,
       engineList: [],
