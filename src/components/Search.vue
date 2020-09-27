@@ -2,10 +2,15 @@
   <div id="Search">
     <div class="search-engine-box"
          @click.stop="showEngine = !showEngine">
-      <img :src="$store.state.engineList[activeEngine].iconPath"
-           width="24"
-           height="24"
-           alt="Icon">
+      <img v-if="activeEngineItem.iconType === 'local' || activeEngineItem.iconType==='network'" :src="activeEngineItem.iconPath"
+            alt="icon"
+            width="24"
+            height="24">
+      <img v-if="activeEngineItem.iconType === 'api'" :src="`http://favicon.cccyun.cc/${activeEngineItem.link}`"
+            alt="icon"
+            width="24"
+            height="24">
+      <div v-if="activeEngineItem.iconType === 'text'" class="no-icon">{{activeEngineItem.name.slice(0,1)}}</div>
     </div>
     <transition name="fadeInUp">
       <div class="engine-selecotr"
@@ -15,10 +20,15 @@
              v-for="(item,index) in $store.state.engineList"
              :key="index"
              @click="handleChangeEngine(index)">
-          <img :src="item.iconPath"
-               alt="icon"
-               width="24"
-               height="24">
+          <img v-if="item.iconType === 'local' || item.iconType==='network'" :src="item.iconPath"
+                alt="icon"
+                width="24"
+                height="24">
+          <img v-if="item.iconType === 'api'" :src="`http://favicon.cccyun.cc/${item.link}`"
+                alt="icon"
+                width="24"
+                height="24">
+          <div v-if="item.iconType === 'text'" class="no-icon">{{item.name.slice(0,1)}}</div>
           <div class="text">{{item.name}}</div>
         </div>
       </div>
@@ -65,6 +75,11 @@ export default {
       }
     })
   },
+  computed: {
+    activeEngineItem () {
+      return this.$store.state.engineList[this.activeEngine]
+    }
+  },
   methods: {
     handleChangeEngine (index) {
       this.activeEngine = index
@@ -81,11 +96,17 @@ export default {
         }
       }
       if (e.keyCode === 13) {
-        window.open(this.$store.state.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
+        this.handleSearchBtnClick()
       }
     },
     handleSearchBtnClick () {
-      window.open(this.$store.state.engineList[this.activeEngine].link + encodeURIComponent(this.searchKey))
+      let link = this.$store.state.engineList[this.activeEngine].link
+      if (/\[0\]/.test(link)) {
+        link = link.replace(/\[0\]/, this.searchKey)
+      } else {
+        link = link + this.searchKey
+      }
+      window.open(link)
     },
     handleInputFocus () {
       if (!localStorage.getItem('tabTipsNoShow')) {
@@ -124,8 +145,19 @@ export default {
     display: inline-flex;
     border-right: 1px solid #ccc;
     cursor: pointer;
-    svg path {
-      fill: var(--textColor);
+    justify-content: center;
+    align-items: center;
+    .no-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #abb;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
     }
   }
   .engine-selecotr {
@@ -154,10 +186,27 @@ export default {
       padding: 5px 10px;
       cursor: pointer;
       border-radius: 3px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
       .text {
         line-height: 18px;
         font-size: 12px;
         color: #889;
+        width: 100%;
+        text-align: center;
+      }
+      .no-icon {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #abb;
+        color: #fff;
+        font-weight: bold;
+        font-size: 16px;
       }
       &:hover {
         background: #d9d9e4;

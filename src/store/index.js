@@ -9,45 +9,53 @@ export default new Vuex.Store({
     engineList: [
       {
         name: 'Bing-CN',
-        iconPath: require('@/assets/img/icon/bing.svg'),
-        link: 'https://cn.bing.com/search?q='
+        link: 'https://cn.bing.com/search?q=',
+        iconType: 'local',
+        iconPath: './icons/bing.svg'
       },
       {
         name: 'Bing-EN',
-        iconPath: require('@/assets/img/icon/bing-en.svg'),
-        link: 'https://cn.bing.com/search?ensearch=1&q='
+        link: 'https://cn.bing.com/search?ensearch=1&q=',
+        iconType: 'local',
+        iconPath: './icons/bing-en.svg'
       },
       {
         name: '百度',
-        iconPath: require('@/assets/img/icon/baidu.svg'),
-        link: 'https://www.baidu.com/s?wd='
+        link: 'https://www.baidu.com/s?wd=',
+        iconType: 'local',
+        iconPath: './icons/baidu.svg'
       },
       {
         name: '有道词典',
-        iconPath: require('@/assets/img/icon/youdao.svg'),
-        link: 'http://dict.youdao.com/w/'
+        link: 'http://dict.youdao.com/w/',
+        iconType: 'local',
+        iconPath: './icons/youdao.svg'
       }
     ],
     backupEngineList: [
       {
         name: 'Google',
-        iconPath: require('@/assets/img/icon/google.svg'),
-        link: 'https://www.google.com/search?q='
+        link: 'https://www.google.com/search?q=',
+        iconType: 'local',
+        iconPath: './icons/google.svg'
       },
       {
         name: '搜狗',
-        iconPath: require('@/assets/img/icon/sougou.svg'),
-        link: 'https://www.sogou.com/tx?query='
+        link: 'https://www.sogou.com/tx?query=',
+        iconType: 'local',
+        iconPath: './icons/sougou.svg'
       },
       {
         name: 'Bilibili',
-        iconPath: require('@/assets/img/icon/bilibili.svg'),
-        link: 'https://search.bilibili.com/all?keyword='
+        link: 'https://search.bilibili.com/all?keyword=',
+        iconType: 'local',
+        iconPath: './icons/bilibili.svg'
       },
       {
         name: '淘宝',
-        iconPath: require('@/assets/img/icon/taobao.svg'),
-        link: 'https://s.taobao.com/search?q='
+        link: 'https://s.taobao.com/search?q=',
+        iconType: 'local',
+        iconPath: './icons/taobao.svg'
       }
     ],
     unsplashImgList: [],
