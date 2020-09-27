@@ -55,8 +55,8 @@
     <animation-dialog ref="addDialog"
                       class="an-dialog"
                       customClass="add-dialog"
-                      :width="isMobile ? '100vw' : '500px'"
-                      :height="isMobile ? '100vh' : '500px'"
+                      :width="isMobile ? '90vw' : '500px'"
+                      :height="isMobile ? '80vh' : '550px'"
                       animationMode
                       appendToBody>
       <div class="title">添加自定义引擎</div>
@@ -111,6 +111,7 @@
             </div>
           </div>
         </div>
+        <div class="form-item" v-if="addEngineForm.iconType !== 'network'" style="height: 32px"></div>
       </div>
       <div class="footer">
         <button tyle="button"
@@ -370,11 +371,8 @@ export default {
   }
 }
 .add-dialog {
-  position:relative;
   .footer {
     text-align: center;
-    position: absolute;
-    bottom: 30px;
     width: 100%;
   }
 }
