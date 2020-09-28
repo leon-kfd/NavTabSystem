@@ -5,51 +5,58 @@
     <div class="content">
       <button class="btn btn-small btn-add" @click="handleAddNewEngine">添加</button>
       <div class="text s-title">当前引擎组</div>
-      <draggable :list="engineList"
-                 :group="{ name: 'engine',pull: engineList.length > 1 }"
-                 @end="handleDragEnd">
-        <transition-group type="transition"
-                          name="flip-list"
-                          class="now-engine-list engine-list">
-          <div class="engine-list-item"
-               v-for="item in engineList"
-               :key="item.name">
-            <img v-if="item.iconType === 'local' || item.iconType==='network'" :src="item.iconPath"
-                 alt="icon"
-                 width="24"
-                 height="24">
-            <img v-if="item.iconType === 'api'" :src="`http://favicon.cccyun.cc/${item.link}`"
-                 alt="icon"
-                 width="24"
-                 height="24">
-            <div v-if="item.iconType === 'text'" class="no-icon">{{item.name.slice(0,1)}}</div>
-            <div class="text">{{item.name}}</div>
-          </div>
-        </transition-group>
-      </draggable>
+      <div class="current-engine-wrapper">
+        <draggable :list="engineList"
+                  :group="{ name: 'engine',pull: engineList.length > 1 }"
+                  @choose="handleDragChoose"
+                  @unchoose="handleDragUnchoose"
+                  @end="handleDragEnd">
+          <transition-group type="transition"
+                            name="flip-list"
+                            class="now-engine-list engine-list">
+            <div class="engine-list-item"
+                v-for="item in engineList"
+                :key="item.name">
+              <img v-if="item.iconType === 'local' || item.iconType==='network'" :src="item.iconPath"
+                  alt="icon"
+                  width="24"
+                  height="24">
+              <img v-if="item.iconType === 'api'" :src="`http://favicon.cccyun.cc/${item.link}`"
+                  alt="icon"
+                  width="24"
+                  height="24">
+              <div v-if="item.iconType === 'text'" class="no-icon">{{item.name.slice(0,1)}}</div>
+              <div class="text">{{item.name}}</div>
+            </div>
+          </transition-group>
+        </draggable>
+      </div>
       <div class="text s-title">备用引擎组</div>
-      <draggable :list="backupEngineList"
-                 group="engine"
-                 @end="handleDragEnd">
-        <transition-group type="transition"
-                          name="flip-list"
-                          class="backupEngineList engine-list">
-          <div class="engine-list-item"
-               v-for="item in backupEngineList"
-               :key="item.name">
-            <img v-if="item.iconType === 'local' || item.iconType==='network'" :src="item.iconPath"
-                 alt="icon"
-                 width="24"
-                 height="24">
-            <img v-if="item.iconType === 'api'" :src="`http://favicon.cccyun.cc/${item.link}`"
-                 alt="icon"
-                 width="24"
-                 height="24">
-            <div v-if="item.iconType === 'text'" class="no-icon">{{item.name.slice(0,1)}}</div>
-            <div class="text">{{item.name}}</div>
-          </div>
-        </transition-group>
-      </draggable>
+        <div class="backup-engine-wrapper">
+        <draggable :list="backupEngineList"
+                  group="engine"
+                  @end="handleDragEnd">
+          <transition-group type="transition"
+                            name="flip-list"
+                            class="backupEngineList engine-list">
+            <div class="engine-list-item"
+                v-for="item in backupEngineList"
+                :key="item.name">
+              <img v-if="item.iconType === 'local' || item.iconType==='network'" :src="item.iconPath"
+                  alt="icon"
+                  width="24"
+                  height="24">
+              <img v-if="item.iconType === 'api'" :src="`http://favicon.cccyun.cc/${item.link}`"
+                  alt="icon"
+                  width="24"
+                  height="24">
+              <div v-if="item.iconType === 'text'" class="no-icon">{{item.name.slice(0,1)}}</div>
+              <div class="text">{{item.name}}</div>
+            </div>
+          </transition-group>
+        </draggable>
+        <div v-if="showDeleteArea" id="deleteArea" class="delete-area">拖拽至此处删除</div>
+      </div>
     </div>
 
     <animation-dialog ref="addDialog"
@@ -149,6 +156,7 @@ export default {
       isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent),
       iconTypeList,
       dragDisabled: false,
+      showDeleteArea: false,
       engineList: [],
       backupEngineList: [],
       addEngineForm: {
@@ -170,7 +178,34 @@ export default {
     this.backupEngineList = JSON.parse(JSON.stringify(this.$store.state.backupEngineList))
   },
   methods: {
-    handleDragEnd () {
+    handleDragChoose (e) {
+      const { oldIndex } = e
+      const { iconType } = this.engineList[oldIndex]
+      if (iconType !== 'local') {
+        this.showDeleteArea = true
+      }
+    },
+    handleDragUnchoose (e) {
+      this.$nextTick(() => {
+        this.showDeleteArea = false
+      })
+    },
+    handleDragEnd (e) {
+      const { originalEvent } = e
+      let pointEl
+      if (originalEvent.type === 'touchend') {
+        const { clientX, clientY } = originalEvent.changedTouches[0]
+        pointEl = document.elementFromPoint(clientX, clientY)
+      } else {
+        const { clientX, clientY } = originalEvent
+        pointEl = document.elementFromPoint(clientX, clientY)
+      }
+      if (pointEl.id === 'deleteArea') {
+        if (confirm('是否删除该自定义引擎')) {
+          const { newIndex } = e
+          this.engineList.splice(newIndex, 1)
+        }
+      }
       localStorage.setItem('engineList', JSON.stringify(this.engineList))
       this.$store.commit('setEngineList', this.engineList)
       this.$store.commit('setBackupEngineList', this.backupEngineList)
@@ -310,6 +345,7 @@ export default {
         font-size: 14px;
         box-sizing: border-box;
         font-size: 16px;
+        border-radius: 0;
         &:focus {
           border: 2px solid var(--primaryColor);
           box-shadow:  0 0 3px var(--primaryColor);
@@ -374,6 +410,23 @@ export default {
   .footer {
     text-align: center;
     width: 100%;
+  }
+}
+
+.backup-engine-wrapper {
+  position: relative;
+  .delete-area {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    background: #cc4462;
+    color: #fff;
+    font-size: 14px;
   }
 }
 
