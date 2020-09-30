@@ -98,7 +98,7 @@ export default {
     right: 0;
     top: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     max-width: 540px;
     z-index: 998;
     transform: translateX(100%);
