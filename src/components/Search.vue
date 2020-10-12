@@ -39,6 +39,12 @@
            @focus="handleInputFocus"
            @blur="handleInputBlur"
            tabindex="-1" />
+    <svg v-if="searchKey" class="clear-btn icon" @click="handleClear"
+          viewBox="0 0 1024 1024"
+          width="20"
+          height="20">
+      <path d="M519.02036023 459.47959989L221.8941505 162.35411435a37.07885742 37.07885742 0 1 0-52.45354772 52.40502656l297.12476134 297.15010821L169.44060278 809.05863314a37.07885742 37.07885742 0 1 0 52.42964924 52.42892505l297.15010821-297.12476136 297.15010822 297.12476136a37.07885742 37.07885742 0 1 0 52.42892504-52.40430237l-297.12476135-297.1740067 297.12476135-297.12548553a37.07885742 37.07885742 0 1 0-52.42892504-52.42964924L519.04498291 459.47959989z"></path>
+    </svg>
     <div class="search-btn"
          @click="handleSearchBtnClick">
       <svg viewBox="0 0 1024 1024"
@@ -107,6 +113,7 @@ export default {
         link = link + this.searchKey
       }
       window.open(link)
+      this.searchKey = ''
     },
     handleInputFocus () {
       if (!localStorage.getItem('tabTipsNoShow')) {
@@ -119,6 +126,9 @@ export default {
     hanldeNoShowMore () {
       this.showTabTips = false
       localStorage.setItem('tabTipsNoShow', 1)
+    },
+    handleClear () {
+      this.searchKey = ''
     }
   }
 }
@@ -224,6 +234,13 @@ export default {
     font-size: 1rem;
     font-weight: 500;
     color: #363640;
+  }
+  .clear-btn {
+    margin-right: 5px;
+    cursor: pointer;
+    path {
+      fill: #99a;
+    }
   }
   .search-btn {
     width: 2rem;
