@@ -5,6 +5,7 @@
             backgroundImage: `url(${bgImg})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed',
             backgroundPosition: 'center center'
           }"></div>
   </div>

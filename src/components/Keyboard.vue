@@ -33,7 +33,7 @@
           <div class="icon-box"
                v-if="userSettingKeyMap[key]">
             <img class="icon"
-                 :src="userSettingKeyMap[key].url ? `http://favicon.cccyun.cc/${userSettingKeyMap[key].url}`: ''"
+                 :src="userSettingKeyMap[key].icon || `http://favicon.cccyun.cc/${userSettingKeyMap[key].url}`"
                  alt="link"
                  @error="handleImgError">
             <div class="no-icon" style="visibility:hidden">{{userSettingKeyMap[key].remark.slice(0,1)}}</div>
@@ -90,6 +90,7 @@
 <script>
 // import AnimationDialog from '@/components/animation-dialog'
 import AnimationDialog from 'howdyjs/lib/animation-dialog'
+import { coverAsync, getTransparentIcon } from '@/utils/helper'
 export default {
   name: 'Keyboard',
   components: {
@@ -201,11 +202,13 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     document.addEventListener('keydown', this.handleKeyboardKeydown)
     if (localStorage.getItem('userSettingKeyMap')) {
       this.userSettingKeyMap = JSON.parse(localStorage.getItem('userSettingKeyMap'))
     }
+    const base64 = await getTransparentIcon('https://kongfandong.cn')
+    console.log(base64)
   },
   methods: {
     handleKeyboardKeydown (e) {
@@ -257,15 +260,20 @@ export default {
         }
       }
     },
-    handleUserKeySave () {
+    async handleUserKeySave () {
       if (!this.editingInfo.url || !this.editingInfo.remark) return
       if (/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/.test(this.editingInfo.url)) {
         if (!(/https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/.test(this.editingInfo.url))) {
           this.editingInfo.url = 'http://' + this.editingInfo.url
         }
+        let [err, icon] = await coverAsync(getTransparentIcon(this.editingInfo.url))
+        if (err) {
+          icon = `http://favicon.cccyun.cc/${this.editingInfo.url}`
+        }
         this.userSettingKeyMap[this.editingInfo.key] = {
           url: this.editingInfo.url,
-          remark: this.editingInfo.remark
+          remark: this.editingInfo.remark,
+          icon
         }
         localStorage.setItem('userSettingKeyMap', JSON.stringify(this.userSettingKeyMap))
         this.handleDialogClose()
@@ -290,18 +298,21 @@ export default {
   max-width: 1020px;
   margin: 1.5rem auto;
   overflow: hidden;
+  position: relative;
   .keys-wrapper {
     box-sizing: border-box;
     padding: 8px;
     .keys-box {
       width: 100%;
       padding-bottom: 100%;
-      background: #fff;
+      // background: #fff;
+      background: rgba(255,255,255,.85);
       position: relative;
       border-radius: 4px;
       cursor: pointer;
       box-shadow: 0 0 5px #262626;
       transition: box-shadow 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+      overflow: hidden;
       &.is-open {
         visibility: hidden;
       }
@@ -348,7 +359,7 @@ export default {
             height: 28px;
             transform: translate(-50%, -50%);
             z-index: 99;
-            background: #fff;
+            // background: #fff;
           }
           .no-icon {
             position: absolute;
@@ -368,7 +379,7 @@ export default {
         .plus-box {
           top: 50%;
           svg path {
-            fill: #9898a2;
+            fill: #7d7d81;
           }
         }
         .mark-text {
@@ -401,7 +412,7 @@ export default {
             fill: #262626;
           }
           &:hover {
-            background: #e2e2e5;
+            background: #fff;
           }
         }
       }
