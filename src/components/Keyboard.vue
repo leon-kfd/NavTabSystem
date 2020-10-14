@@ -202,13 +202,11 @@ export default {
       }
     }
   },
-  async mounted () {
+  mounted () {
     document.addEventListener('keydown', this.handleKeyboardKeydown)
     if (localStorage.getItem('userSettingKeyMap')) {
       this.userSettingKeyMap = JSON.parse(localStorage.getItem('userSettingKeyMap'))
     }
-    const base64 = await getTransparentIcon('https://kongfandong.cn')
-    console.log(base64)
   },
   methods: {
     handleKeyboardKeydown (e) {
@@ -306,7 +304,7 @@ export default {
       width: 100%;
       padding-bottom: 100%;
       // background: #fff;
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.9);
       position: relative;
       border-radius: 4px;
       cursor: pointer;
@@ -379,7 +377,7 @@ export default {
         .plus-box {
           top: 50%;
           svg path {
-            fill: #7d7d81;
+            fill: #9a9aa0;
           }
         }
         .mark-text {
