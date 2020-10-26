@@ -33,18 +33,25 @@
         </div>
       </div>
     </transition>
-    <input class="search-input-box"
+    <div class="search-input-box-wrapper">
+      <input class="search-input-box"
            v-model="searchKey"
            @keydown.stop="handleInputKeyDown"
            @focus="handleInputFocus"
            @blur="handleInputBlur"
            tabindex="-1" />
-    <svg v-if="searchKey" class="clear-btn icon" @click="handleClear"
-          viewBox="0 0 1024 1024"
-          width="20"
-          height="20">
-      <path d="M519.02036023 459.47959989L221.8941505 162.35411435a37.07885742 37.07885742 0 1 0-52.45354772 52.40502656l297.12476134 297.15010821L169.44060278 809.05863314a37.07885742 37.07885742 0 1 0 52.42964924 52.42892505l297.15010821-297.12476136 297.15010822 297.12476136a37.07885742 37.07885742 0 1 0 52.42892504-52.40430237l-297.12476135-297.1740067 297.12476135-297.12548553a37.07885742 37.07885742 0 1 0-52.42892504-52.42964924L519.04498291 459.47959989z"></path>
-    </svg>
+      <svg v-if="searchKey" class="clear-btn icon" @click="handleClear"
+            viewBox="0 0 1024 1024"
+            width="20"
+            height="20">
+        <path d="M519.02036023 459.47959989L221.8941505 162.35411435a37.07885742 37.07885742 0 1 0-52.45354772 52.40502656l297.12476134 297.15010821L169.44060278 809.05863314a37.07885742 37.07885742 0 1 0 52.42964924 52.42892505l297.15010821-297.12476136 297.15010822 297.12476136a37.07885742 37.07885742 0 1 0 52.42892504-52.40430237l-297.12476135-297.1740067 297.12476135-297.12548553a37.07885742 37.07885742 0 1 0-52.42892504-52.42964924L519.04498291 459.47959989z"></path>
+      </svg>
+      <transition name="fadeInUp">
+        <div class="link-search-wrapper" v-if="linkSearchArr.length > 0">
+          <div class="link-search-item" :class="{active: linkSearchArrActive === index}" v-for="(item,index) in linkSearchArr" :key="item" @click="handleLinkSearchJump(item)">{{item}}</div>
+        </div>
+      </transition>
+    </div>
     <div class="search-btn"
          @click="handleSearchBtnClick">
       <svg viewBox="0 0 1024 1024"
@@ -64,6 +71,7 @@
   </div>
 </template>
 <script>
+import { ajaxGet } from '@/utils/helper'
 export default {
   name: 'Search',
   data () {
@@ -71,7 +79,10 @@ export default {
       activeEngine: 0,
       showEngine: false,
       searchKey: '',
-      showTabTips: false
+      linkSearchArr: [],
+      linkSearchArrActive: -1,
+      showTabTips: false,
+      throttleTimer: null
     }
   },
   mounted () {
@@ -92,17 +103,33 @@ export default {
       this.showEngine = false
     },
     handleInputKeyDown (e) {
-      if (e.keyCode === 9) {
-        if (e.shiftKey) {
-          this.activeEngine = this.activeEngine <= 0 ? this.$store.state.engineList.length - 1 : --this.activeEngine
-          e.preventDefault()
-        } else {
-          this.activeEngine = this.activeEngine >= this.$store.state.engineList.length - 1 ? 0 : ++this.activeEngine
-          e.preventDefault()
+      const specialKeyArr = [9, 13, 38, 40]
+      if (specialKeyArr.includes(e.keyCode)) {
+        if (e.keyCode === 9) { // Tab键
+          if (e.shiftKey) {
+            this.activeEngine = this.activeEngine <= 0 ? this.$store.state.engineList.length - 1 : --this.activeEngine
+            e.preventDefault()
+          } else {
+            this.activeEngine = this.activeEngine >= this.$store.state.engineList.length - 1 ? 0 : ++this.activeEngine
+            e.preventDefault()
+          }
         }
-      }
-      if (e.keyCode === 13) {
-        this.handleSearchBtnClick()
+        if (e.keyCode === 13) { // 回车键
+          this.handleSearchBtnClick()
+        }
+        if (e.keyCode === 38) {
+          this.linkSearchArrActive = this.linkSearchArrActive <= 0 && this.linkSearchArr.length > 0 ? this.linkSearchArr.length - 1 : this.linkSearchArrActive - 1
+          this.searchKey = this.linkSearchArr[this.linkSearchArrActive]
+        }
+        if (e.keyCode === 40) {
+          this.linkSearchArrActive = this.linkSearchArrActive < this.linkSearchArr.length - 1 && this.linkSearchArr.length > 0 ? this.linkSearchArrActive + 1 : 0
+          this.searchKey = this.linkSearchArr[this.linkSearchArrActive]
+        }
+      } else {
+        if (this.throttleTimer) clearTimeout(this.throttleTimer)
+        this.throttleTimer = setTimeout(() => {
+          this.linkSearch()
+        }, 400)
       }
     },
     handleSearchBtnClick () {
@@ -116,12 +143,14 @@ export default {
       this.searchKey = ''
     },
     handleInputFocus () {
+      this.linkSearch()
       if (!localStorage.getItem('tabTipsNoShow')) {
         this.showTabTips = true
       }
     },
     handleInputBlur () {
       this.showTabTips = false
+      this.linkSearchArr = []
     },
     hanldeNoShowMore () {
       this.showTabTips = false
@@ -129,6 +158,34 @@ export default {
     },
     handleClear () {
       this.searchKey = ''
+    },
+    async linkSearch () {
+      if (!this.searchKey) {
+        this.linkSearchArr = []
+        this.linkSearchArrActive = -1
+        return
+      }
+      try {
+        const data = await ajaxGet(`${this.$baseURL}/getAutomatedKeywords?s=${this.searchKey}`)
+        const res = JSON.parse(data)
+        if (res.errCode === 200) {
+          this.showTabTips = false
+          this.linkSearchArr = res.data
+        } else {
+          this.linkSearchArr = []
+        }
+      } catch (e) {
+        this.linkSearchArr = []
+        this.linkSearchArrActive = -1
+      }
+    },
+    handleLinkSearchJump (key) {
+      this.linkSearchArr = []
+      this.linkSearchArrActive = -1
+      this.searchKey = key
+      setTimeout(() => {
+        this.handleSearchBtnClick()
+      }, 200)
     }
   }
 }
@@ -145,7 +202,7 @@ export default {
   align-items: center;
   transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
   position: relative;
-  background: #fff;
+  background:rgba(255,255,255,.9);
   &:hover {
     box-shadow: 0 0 10px #262626;
     transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -223,23 +280,63 @@ export default {
       }
     }
   }
-  .search-input-box {
+  .search-input-box-wrapper {
     flex: 1;
     width: 100%;
     height: 100%;
-    outline: none;
-    border: none;
-    background: transparent;
-    padding: 0 10px;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #363640;
-  }
-  .clear-btn {
-    margin-right: 5px;
-    cursor: pointer;
-    path {
-      fill: #99a;
+    display: flex;
+    align-items: center;
+    position: relative;
+    .search-input-box {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      outline: none;
+      border: none;
+      background: transparent;
+      padding: 0 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #363640;
+      vertical-align: middle;
+    }
+    .clear-btn {
+      position: absolute;
+      height: 100%;
+      right: 0;
+      cursor: pointer;
+      path {
+        fill: #99a;
+      }
+    }
+    .link-search-wrapper {
+      position: absolute;
+      width: 100%;
+      top: calc(2.4rem + 5px);
+      background: rgb(247, 250, 252);
+      text-align: left;
+      z-index: 20;
+      border-radius: 4px;
+      box-shadow: 0 0 10px #262626;
+      padding: 5px 0;
+      .link-search-item {
+        padding: 0 10px;
+        line-height: 30px;
+        font-size: 13px;
+        color: #383849;
+        cursor: pointer;
+        width: 100%;
+        height: 30px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        &:hover {
+          color: #2e5adb;
+        }
+        &.active {
+          color: #2e5adb;
+        }
+      }
     }
   }
   .search-btn {

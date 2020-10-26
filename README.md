@@ -9,6 +9,7 @@
 3. ✅键盘收藏夹
 4. ✅背景图切换
 5. ✅配置同步
+6. ✅关键词联想搜索
 
 ## 在线DEMO
 项目成品已部署线上，<a href="http://s.kongfandong.cn" target="_blank">点击访问</a>
