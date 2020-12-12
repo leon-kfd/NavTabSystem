@@ -28,7 +28,7 @@ npm run serve
 **Animation-dialog Api & Demo**: <a href="https://kongfandong.cn/howdy/animation-dialog" target="_blank">Click Here</a>
 
 ### 每日图片来源
-背景图会每天更新10张用于用户选择，使用`unsplash`无版权网站提供的API，因为需要accessKey，当前线上版采用的是本人的Koa服务。若要自己实现请参考<a href="https://unsplash.com/documentation" target="_blank">Unsplash API</a>
+背景图会每天更新10张用于用户选择，使用`unsplash`无版权网站提供的API，因为需要accessKey，当前线上版采用的是本人的Koa服务。若要自己实现请参考<a href="https://unsplash.com/documentation" target="_blank">Unsplash API</a>. 同时为了优化国内访问速度，使用了第三方Unsplash国内镜像服务<a href="https://unsplash.dogedoge.com/" target="_blank">https://unsplash.dogedoge.com/</a>
 
 
 

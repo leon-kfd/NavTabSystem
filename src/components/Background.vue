@@ -27,7 +27,9 @@ export default {
   methods: {
     getPhotoList () {
       ajaxGet(`${this.$baseURL}/photos`).then(data => {
-        const res = JSON.parse(data)
+        // 使用国内Unsplash镜像:<copyright>dogedoge.com
+        const formatData = data.replace(/images\.unsplash\.com/g, 'rmt.dogedoge.com/fetch/~/source/unsplash')
+        const res = JSON.parse(formatData)
         if (res.errCode === 200) {
           const imgList = res.data.list
           this.$store.commit('setUnsplashImgList', imgList)
