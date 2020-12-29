@@ -80,6 +80,7 @@
                   @click="clearEidtInfo">Clear</button>
           <button tyle="button"
                   class="btn btn-primary fr"
+                  :class="{'btn-loading': saveLoading}"
                   @click="handleUserKeySave">Save</button>
         </div>
       </div>
@@ -199,7 +200,8 @@ export default {
         key: '',
         url: '',
         remark: ''
-      }
+      },
+      saveLoading: false
     }
   },
   mounted () {
@@ -264,6 +266,7 @@ export default {
         if (!(/https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/.test(this.editingInfo.url))) {
           this.editingInfo.url = 'http://' + this.editingInfo.url
         }
+        this.saveLoading = true
         let [err, icon] = await coverAsync(getTransparentIcon(this.editingInfo.url))
         if (err) {
           icon = `http://favicon.cccyun.cc/${this.editingInfo.url}`
@@ -276,6 +279,7 @@ export default {
         localStorage.setItem('userSettingKeyMap', JSON.stringify(this.userSettingKeyMap))
         this.handleDialogClose()
         this.$refs.dialog.close()
+        this.saveLoading = false
       } else {
         this.$warning('URL地址不正确')
       }
@@ -493,6 +497,9 @@ export default {
         font-weight: bold;
         font-size: 18px;
         transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+        position: relative;
+        display: flex;
+        align-items: center;
       }
       .btn-primary {
         background: var(--primaryColor);
@@ -509,10 +516,37 @@ export default {
           transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
         }
       }
+      .btn-loading {
+        cursor: not-allowed;
+        background: #6b6b6b !important;
+        &:hover {
+          background: inherit;
+        }
+        &:after {
+          content: " ";
+          display: block;
+          width: 1em;
+          height: 1em;
+          box-sizing: border-box;
+          border-radius: 50%;
+          border: .2em solid currentColor;
+          border-left-color: transparent; 
+          margin-left: .3em;
+          animation: spin-loading 1s infinite linear;
+        }
+      }
     }
   }
 }
 .key-edit-dialog {
   border-radius: 4px;
+}
+@keyframes spin-loading {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

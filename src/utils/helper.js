@@ -17,11 +17,14 @@ export function getToday() {
   return `${year}-${month}-${day}`
 }
 
-export function getBase64ByAjax(url, formatter = 'image/png', processFn) {
+export function getBase64ByAjax(url, formatter = 'image/png', processFn, timeout) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open('GET', url, true)
     xhr.responseType = 'arraybuffer'
+    if (timeout) {
+      xhr.timeout = timeout
+    }
     xhr.onload = (e) => {
       if (xhr.status === 200) {
         const uInt8Array = new Uint8Array(xhr.response)
@@ -41,6 +44,12 @@ export function getBase64ByAjax(url, formatter = 'image/png', processFn) {
     }
     xhr.onprogress = (e) => {
       processFn && processFn(e)
+    }
+    if (timeout) {
+      xhr.ontimeout = (e) => {
+        xhr.abort()
+        reject(e)
+      }
     }
     xhr.send()
   })
@@ -107,7 +116,7 @@ export function execCopy(text) {
 export function getTransparentIcon (url) {
   return new Promise((resolve, reject) => {
     const target = `http://favicon.cccyun.cc/${url}`
-    getBase64ByAjax(target, 'image/x-icon').then(base64 => {
+    getBase64ByAjax(target, 'image/x-icon', null, 5000).then(base64 => {
       const img = new Image()
       img.src = base64
       img.onload = () => {
